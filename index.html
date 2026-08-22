@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f172a" />
+  <title>EV充電記録</title>
+  <link rel="manifest" href="manifest.json" />
+  <style>
+    :root{
+      --bg:#f8fafc; --card:#ffffff; --text:#0f172a; --muted:#64748b;
+      --line:#e2e8f0; --accent:#0f766e; --accent2:#14b8a6; --danger:#dc2626;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+    header{position:sticky;top:0;z-index:10;background:#0f172a;color:#fff;padding:16px 18px 12px}
+    header h1{font-size:20px;margin:0 0 4px}
+    header p{margin:0;color:#cbd5e1;font-size:12px}
+    nav{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:10px 12px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:60px;z-index:9}
+    nav button{border:0;border-radius:10px;padding:10px 6px;background:#e2e8f0;font-weight:700;color:#334155}
+    nav button.active{background:var(--accent);color:#fff}
+    main{padding:14px;max-width:900px;margin:auto;padding-bottom:90px}
+    section{display:none}.active-section{display:block}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:14px;box-shadow:0 2px 8px rgba(15,23,42,.04)}
+    .card h2{font-size:16px;margin:0 0 12px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .full{grid-column:1/-1}
+    label{display:block;font-size:12px;color:#475569;font-weight:700;margin-bottom:5px}
+    input,select,textarea{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:10px;background:#fff;font-size:16px}
+    textarea{min-height:70px;resize:vertical}
+    .calc{background:#f0fdfa;border:1px solid #99f6e4;border-radius:12px;padding:10px;font-size:14px}
+    .btn{width:100%;border:0;border-radius:12px;padding:13px;font-weight:800;font-size:16px;background:var(--accent);color:#fff}
+    .btn.secondary{background:#334155}.btn.danger{background:var(--danger)}
+    .stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px}
+    .stat .v{font-size:20px;font-weight:800}.stat .k{font-size:11px;color:var(--muted);margin-top:4px}
+    .row{border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px;background:#fff}
+    .row-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+    .place{font-weight:800}.date{font-size:12px;color:var(--muted)}
+    .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+    .chip{font-size:11px;background:#f1f5f9;border-radius:999px;padding:5px 8px;color:#334155}
+    .row-actions{display:flex;gap:8px;margin-top:10px}
+    .row-actions button{flex:1;border:0;padding:8px;border-radius:9px;background:#e2e8f0;font-weight:700}
+    .row-actions .del{background:#fee2e2;color:#991b1b}
+    .table-wrap{overflow:auto}
+    table{border-collapse:collapse;width:100%;font-size:13px}
+    th,td{padding:9px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+    th:first-child,td:first-child{text-align:left}
+    .empty{text-align:center;color:var(--muted);padding:26px 10px}
+    .toolbar{display:flex;gap:8px;margin-bottom:10px}
+    .toolbar select,.toolbar input{font-size:14px;padding:9px}
+    @media(max-width:560px){.grid{grid-template-columns:1fr}.full{grid-column:auto}.stats{grid-template-columns:1fr 1fr}nav{top:60px}}
+  </style>
+</head>
+<body>
+<header>
+  <h1>EV充電記録</h1>
+  <p>充電履歴・料金・効率をかんたん管理</p>
+</header>
+
+<nav>
+  <button class="tab active" data-target="inputSec">記録</button>
+  <button class="tab" data-target="historySec">履歴</button>
+  <button class="tab" data-target="summarySec">集計</button>
+</nav>
+
+<main>
+  <section id="inputSec" class="active-section">
+    <div class="card">
+      <h2>充電記録を入力</h2>
+      <div class="grid">
+        <div>
+          <label>日付</label>
+          <input id="date" type="date" />
+        </div>
+        <div>
+          <label>充電場所</label>
+          <input id="place" list="places" placeholder="例：U_PLACE" />
+          <datalist id="places"></datalist>
+        </div>
+        <div>
+          <label>種別</label>
+          <select id="type">
+            <option value="急速">急速</option>
+            <option value="普通">普通</option>
+          </select>
+        </div>
+        <div>
+          <label>充電器出力（kW）</label>
+          <input id="power" type="number" inputmode="decimal" placeholder="例：25" />
+        </div>
+        <div>
+          <label>開始時（%）</label>
+          <input id="startPct" type="number" inputmode="numeric" min="0" max="100" placeholder="例：25" />
+        </div>
+        <div>
+          <label>終了時（%）</label>
+          <input id="endPct" type="number" inputmode="numeric" min="0" max="100" placeholder="例：55" />
+        </div>
+        <div>
+          <label>充電時間（分）</label>
+          <input id="minutes" type="number" inputmode="numeric" min="0" placeholder="例：30" />
+        </div>
+        <div>
+          <label>充電量（kWh）</label>
+          <input id="kwh" type="number" inputmode="decimal" step="0.1" min="0" placeholder="例：11.8" />
+        </div>
+        <div>
+          <label>金額（円）</label>
+          <input id="cost" type="number" inputmode="numeric" min="0" placeholder="例：500" />
+        </div>
+        <div>
+          <label>走行距離（km）</label>
+          <input id="odo" type="number" inputmode="numeric" min="0" placeholder="任意" />
+        </div>
+        <div class="full">
+          <label>メモ</label>
+          <textarea id="memo" placeholder="例：買い物中、混雑なし など"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>自動計算</h2>
+      <div class="calc" id="calcBox">増加率：- ／ 1kWhあたり：-</div>
+    </div>
+
+    <button class="btn" id="saveBtn">この内容を保存</button>
+  </section>
+
+  <section id="historySec">
+    <div class="card">
+      <h2>充電履歴</h2>
+      <div class="toolbar">
+        <input id="search" placeholder="場所で検索" />
+        <select id="filterType">
+          <option value="">すべて</option>
+          <option value="急速">急速</option>
+          <option value="普通">普通</option>
+        </select>
+      </div>
+      <div id="history"></div>
+    </div>
+  </section>
+
+  <section id="summarySec">
+    <div class="card">
+      <h2>月別集計</h2>
+      <div class="toolbar"><input id="monthPicker" type="month" /></div>
+      <div class="stats">
+        <div class="stat"><div class="v" id="sCount">0</div><div class="k">充電回数</div></div>
+        <div class="stat"><div class="v" id="sKwh">0.0</div><div class="k">充電量 kWh</div></div>
+        <div class="stat"><div class="v" id="sCost">¥0</div><div class="k">充電金額</div></div>
+        <div class="stat"><div class="v" id="sAvg">-</div><div class="k">平均 円/kWh</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>充電場所別</h2>
+      <div class="table-wrap">
+        <table><thead><tr><th>場所</th><th>回数</th><th>kWh</th><th>金額</th><th>円/kWh</th></tr></thead><tbody id="placeTable"></tbody></table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>出力別</h2>
+      <div class="table-wrap">
+        <table><thead><tr><th>出力</th><th>回数</th><th>平均増加%</th><th>平均時間</th></tr></thead><tbody id="powerTable"></tbody></table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>データ管理</h2>
+      <button class="btn secondary" id="exportBtn">CSVで書き出す</button>
+      <div style="height:8px"></div>
+      <button class="btn danger" id="clearBtn">全データ削除</button>
+    </div>
+  </section>
+</main>
+
+<script>
+const KEY = "evChargeRecordsV1";
+let records = JSON.parse(localStorage.getItem(KEY) || "[]");
+
+const $ = id => document.getElementById(id);
+const today = new Date();
+$("date").value = today.toISOString().slice(0,10);
+$("monthPicker").value = today.toISOString().slice(0,7);
+
+function saveStore(){ localStorage.setItem(KEY, JSON.stringify(records)); }
+
+function num(id){ const v=$(id).value; return v===""?null:Number(v); }
+
+function refreshCalc(){
+  const s=num("startPct"), e=num("endPct"), k=num("kwh"), c=num("cost");
+  const gain=(s!==null&&e!==null)?e-s:null;
+  const unit=(k&&c!==null)?c/k:null;
+  $("calcBox").textContent=`増加率：${gain===null?"-":gain+"%"} ／ 1kWhあたり：${unit===null?"-":unit.toFixed(1)+"円"}`;
+}
+["startPct","endPct","kwh","cost"].forEach(id=>$(id).addEventListener("input",refreshCalc));
+
+$("saveBtn").addEventListener("click",()=>{
+  const rec={
+    id:Date.now(),
+    date:$("date").value,
+    place:$("place").value.trim(),
+    type:$("type").value,
+    power:num("power"),
+    startPct:num("startPct"),
+    endPct:num("endPct"),
+    minutes:num("minutes"),
+    kwh:num("kwh"),
+    cost:num("cost"),
+    odo:num("odo"),
+    memo:$("memo").value.trim()
+  };
+  if(!rec.date || !rec.place){ alert("日付と充電場所を入力してください。"); return; }
+  if(rec.startPct!==null && rec.endPct!==null && rec.endPct < rec.startPct){
+    if(!confirm("終了時％が開始時％より小さいです。このまま保存しますか？")) return;
+  }
+  records.push(rec); saveStore();
+  alert("保存しました。");
+  ["place","power","startPct","endPct","minutes","kwh","cost","odo","memo"].forEach(id=>$(id).value="");
+  refreshCalc(); renderAll();
+});
+
+function gain(r){ return (r.startPct!=null&&r.endPct!=null)?r.endPct-r.startPct:null; }
+function unit(r){ return (r.kwh&&r.cost!=null)?r.cost/r.kwh:null; }
+function yen(n){ return "¥"+Math.round(n||0).toLocaleString(); }
+
+function renderHistory(){
+  const q=$("search").value.trim().toLowerCase();
+  const ft=$("filterType").value;
+  const arr=[...records].reverse().filter(r=>(!q||r.place.toLowerCase().includes(q))&&(!ft||r.type===ft));
+  $("history").innerHTML = arr.length ? arr.map(r=>`
+    <div class="row">
+      <div class="row-top">
+        <div><div class="place">${escapeHtml(r.place)}</div><div class="date">${r.date}</div></div>
+        <div style="font-weight:800">${r.cost!=null?yen(r.cost):"-"}</div>
+      </div>
+      <div class="chips">
+        <span class="chip">${r.type}</span>
+        ${r.power!=null?`<span class="chip">${r.power}kW</span>`:""}
+        ${(r.startPct!=null&&r.endPct!=null)?`<span class="chip">${r.startPct}% → ${r.endPct}%（+${gain(r)}%）</span>`:""}
+        ${r.minutes!=null?`<span class="chip">${r.minutes}分</span>`:""}
+        ${r.kwh!=null?`<span class="chip">${r.kwh}kWh</span>`:""}
+        ${unit(r)!=null?`<span class="chip">${unit(r).toFixed(1)}円/kWh</span>`:""}
+      </div>
+      ${r.memo?`<div style="margin-top:8px;font-size:12px;color:#64748b">${escapeHtml(r.memo)}</div>`:""}
+      <div class="row-actions"><button class="del" onclick="deleteRec(${r.id})">削除</button></div>
+    </div>`).join("") : '<div class="empty">まだ記録がありません。</div>';
+}
+window.deleteRec=id=>{
+  if(confirm("この記録を削除しますか？")){
+    records=records.filter(r=>r.id!==id); saveStore(); renderAll();
+  }
+};
+
+function groupBy(arr,keyFn){
+  return arr.reduce((m,r)=>{const k=keyFn(r);(m[k]??=[]).push(r);return m;},{});
+}
+function renderSummary(){
+  const m=$("monthPicker").value;
+  const arr=records.filter(r=>!m || r.date.startsWith(m));
+  const totalKwh=arr.reduce((s,r)=>s+(r.kwh||0),0);
+  const totalCost=arr.reduce((s,r)=>s+(r.cost||0),0);
+  $("sCount").textContent=arr.length;
+  $("sKwh").textContent=totalKwh.toFixed(1);
+  $("sCost").textContent=yen(totalCost);
+  $("sAvg").textContent=totalKwh? (totalCost/totalKwh).toFixed(1)+"円":"-";
+
+  const pg=groupBy(arr,r=>r.place||"未設定");
+  $("placeTable").innerHTML=Object.entries(pg).sort((a,b)=>b[1].length-a[1].length).map(([k,rs])=>{
+    const kwh=rs.reduce((s,r)=>s+(r.kwh||0),0), cost=rs.reduce((s,r)=>s+(r.cost||0),0);
+    return `<tr><td>${escapeHtml(k)}</td><td>${rs.length}</td><td>${kwh.toFixed(1)}</td><td>${yen(cost)}</td><td>${kwh?(cost/kwh).toFixed(1):"-"}</td></tr>`;
+  }).join("") || `<tr><td colspan="5">データなし</td></tr>`;
+
+  const og=groupBy(arr,r=>r.power!=null?String(r.power):"未設定");
+  $("powerTable").innerHTML=Object.entries(og).sort((a,b)=>(parseFloat(a[0])||999)-(parseFloat(b[0])||999)).map(([k,rs])=>{
+    const gs=rs.map(gain).filter(v=>v!=null);
+    const mins=rs.map(r=>r.minutes).filter(v=>v!=null);
+    const ag=gs.length?gs.reduce((a,b)=>a+b,0)/gs.length:null;
+    const am=mins.length?mins.reduce((a,b)=>a+b,0)/mins.length:null;
+    return `<tr><td>${k==="未設定"?k:k+"kW"}</td><td>${rs.length}</td><td>${ag==null?"-":ag.toFixed(1)+"%"}</td><td>${am==null?"-":am.toFixed(0)+"分"}</td></tr>`;
+  }).join("") || `<tr><td colspan="4">データなし</td></tr>`;
+}
+function renderPlaces(){
+  const unique=[...new Set(records.map(r=>r.place).filter(Boolean))].sort();
+  $("places").innerHTML=unique.map(p=>`<option value="${escapeHtml(p)}"></option>`).join("");
+}
+function renderAll(){ renderHistory(); renderSummary(); renderPlaces(); }
+
+$("search").addEventListener("input",renderHistory);
+$("filterType").addEventListener("change",renderHistory);
+$("monthPicker").addEventListener("change",renderSummary);
+
+document.querySelectorAll(".tab").forEach(btn=>btn.addEventListener("click",()=>{
+  document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  document.querySelectorAll("main section").forEach(s=>s.classList.remove("active-section"));
+  $(btn.dataset.target).classList.add("active-section");
+  renderAll();
+}));
+
+$("exportBtn").addEventListener("click",()=>{
+  const headers=["日付","充電場所","種別","出力kW","開始%","終了%","増加%","時間分","充電量kWh","金額円","円/kWh","走行距離km","メモ"];
+  const rows=records.map(r=>[r.date,r.place,r.type,r.power??"",r.startPct??"",r.endPct??"",gain(r)??"",r.minutes??"",r.kwh??"",r.cost??"",unit(r)!=null?unit(r).toFixed(1):"",r.odo??"",r.memo??""]);
+  const esc=v=>'"'+String(v).replaceAll('"','""')+'"';
+  const csv="\ufeff"+[headers,...rows].map(row=>row.map(esc).join(",")).join("\n");
+  const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
+  const url=URL.createObjectURL(blob); const a=document.createElement("a");
+  a.href=url; a.download="EV充電記録.csv"; a.click(); URL.revokeObjectURL(url);
+});
+
+$("clearBtn").addEventListener("click",()=>{
+  if(confirm("すべての記録を削除します。元に戻せません。よろしいですか？")){
+    records=[];saveStore();renderAll();
+  }
+});
+
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+renderAll();
+refreshCalc();
+
+if("serviceWorker" in navigator){ navigator.serviceWorker.register("./sw.js").catch(()=>{}); }
+</script>
+</body>
+</html>

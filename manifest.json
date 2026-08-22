@@ -1,0 +1,9 @@
+{
+  "name": "EV充電記録",
+  "short_name": "EV充電",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#0f172a",
+  "icons": []
+}
