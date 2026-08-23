@@ -206,13 +206,13 @@ function saveStore(){ localStorage.setItem(KEY, JSON.stringify(records)); }
 function num(id){ const v=$(id).value; return v===""?null:Number(v); }
 
 function refreshCalc(){
-  const s=num("startPct"), e=num("endPct"), k=num("kwh"), c=num("cost");
+  const s=num("startPct"), e=num("endPct"), k=num("kwh"), c=num("cost"),m=num("minutes"), avg=(k!==null&&m!==null&&m>0)?k/(m/60):null;
   const gain=(s!==null&&e!==null)?e-s:null;
  $("increasePct").value = gain !== null ? `+${gain}%` : "";
   const unit=(k&&c!==null)?c/k:null;
-  $("calcBox").textContent=`増加率：${gain===null?"-":gain+"%"} ／ 1kWhあたり：${unit===null?"-":unit.toFixed(1)+"円"}`;
+  $("calcBox").textContent=`増加率：${gain===null?"-":gain+"%"} ／ 1kWhあたり：${unit===null?"-":unit.toFixed(1)+"円"}`／ 平均充電出力：${avg===null?"-":avg.toFixed(1)+"kW"};
 }
-["startPct","endPct","kwh","cost"].forEach(id=>$(id).addEventListener("input",refreshCalc));
+["startPct","endPct","kwh","cost","minutes"].forEach(id=>$(id).addEventListener("input",refreshCalc));
 
 $("saveBtn").addEventListener("click",()=>{
   const rec={
