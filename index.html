@@ -195,14 +195,20 @@
 <script>
 const KEY = "evChargeRecordsV1";
 let records = JSON.parse(localStorage.getItem(KEY) || "[]");
-
+function refreshPlaces(){
+  const places=[...new Set(records.map(r=>r.place).filter(Boolean))].sort();
+  $("places").innerHTML=places.map(p=>`<option value="${p}"></option>`).join("");
+}
 const $ = id => document.getElementById(id);
+refreshPlaces();
 const today = new Date();
 $("date").value = today.toISOString().slice(0,10);
 $("monthPicker").value = today.toISOString().slice(0,7);
 
-function saveStore(){ localStorage.setItem(KEY, JSON.stringify(records)); }
-
+function saveStore(){
+  localStorage.setItem(KEY,JSON.stringify(records));
+  refreshPlaces();
+}
 function num(id){ const v=$(id).value; return v===""?null:Number(v); }
 
 function refreshCalc(){
