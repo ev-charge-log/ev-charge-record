@@ -108,6 +108,10 @@
           <input id="endPct" type="number" inputmode="numeric" min="0" max="100" placeholder="例：55" />
         </div>
         <div>
+  <label>充電増加率</label>
+  <input id="increasePct" type="text" readonly placeholder="自動計算" />
+</div>
+        <div>
           <label>充電時間（分）</label>
           <input id="minutes" type="number" inputmode="numeric" min="0" placeholder="例：30" />
         </div>
@@ -204,6 +208,7 @@ function num(id){ const v=$(id).value; return v===""?null:Number(v); }
 function refreshCalc(){
   const s=num("startPct"), e=num("endPct"), k=num("kwh"), c=num("cost");
   const gain=(s!==null&&e!==null)?e-s:null;
+ $("increasePct").value = gain !== null ? `+${gain}%` : "";
   const unit=(k&&c!==null)?c/k:null;
   $("calcBox").textContent=`増加率：${gain===null?"-":gain+"%"} ／ 1kWhあたり：${unit===null?"-":unit.toFixed(1)+"円"}`;
 }
