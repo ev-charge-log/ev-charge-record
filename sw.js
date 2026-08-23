@@ -1,4 +1,4 @@
-const CACHE = 'ev-charge-v2';
+const CACHE = 'ev-charge-v3';
 
 const ASSETS = [
   './',
