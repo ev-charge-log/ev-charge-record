@@ -228,7 +228,21 @@ function refreshCalc(){
     `増加率：${gain===null?"-":gain+"%"} ／ 1kWhあたり：${unit===null?"-":unit.toFixed(1)+"円"} ／ 平均充電出力：${avg===null?"-":avg.toFixed(1)+"kW"}`;
 }
 ["startPct","endPct","kwh","cost","minutes"].forEach(id=>$(id).addEventListener("input",refreshCalc));
+$("place").addEventListener("change",()=>{
+  const place=$("place").value.trim();
+  if(!place) return;
 
+  const last=[...records]
+    .reverse()
+    .find(r=>r.place===place);
+
+  if(!last) return;
+
+  if(last.type) $("type").value=last.type;
+  if(last.power!=null) $("power").value=last.power;
+
+  refreshCalc();
+});
 $("saveBtn").addEventListener("click",()=>{
   const rec={
     id:Date.now(),
