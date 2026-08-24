@@ -347,9 +347,21 @@ function renderSummary(){
   $("sKwh").textContent=totalKwh.toFixed(1);
   $("sCost").textContent=yen(totalCost);
   $("sAvg").textContent=totalKwh? (totalCost/totalKwh).toFixed(1)+"円":"-";
-　　const totalKm=arr.reduce((s,r)=>s+(Number(r.odo)||0),0);
-const costPerKm=totalKm>0?totalCost/totalKm:null;
-$("statCostPerKm").textContent=costPerKm!=null?costPerKm.toFixed(1)+"円/km":"-";
+　　const odoList=arr
+  .map(r=>Number(r.odo))
+  .filter(v=>Number.isFinite(v)&&v>0)
+  .sort((a,b)=>a-b);
+
+const totalKm=odoList.length>=2
+  ? odoList[odoList.length-1]-odoList[0]
+  : 0;
+
+const costPerKm=totalKm>0
+  ? totalCost/totalKm
+  : null;
+
+$("statCostPerKm").textContent=
+  costPerKm!==null ? costPerKm.toFixed(2)+"円" : "-";
   const validPower=arr.filter(r=>r.kwh!=null&&r.kwh>0&&r.minutes!=null&&r.minutes>0);
 const totalMinutes=validPower.reduce((s,r)=>s+Number(r.minutes),0);
 const powerKwh=validPower.reduce((s,r)=>s+Number(r.kwh),0);
