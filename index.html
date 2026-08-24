@@ -357,7 +357,16 @@ const rapidCount=arr.filter(r=>r.type==="急速").length;
 const normalCount=arr.filter(r=>r.type==="普通").length;
 $("statTypeCount").textContent=`急速 ${rapidCount}回／普通 ${normalCount}回`;
   const pg=groupBy(arr,r=>r.place||"未設定");
-  $("placeTable").innerHTML=Object.entries(pg).sort((a,b)=>b[1].length-a[1].length).map(([k,rs])=>{
+  const placeEntries=Object.entries(pg).sort(([,a],[,b])=>{
+  const ak=a.reduce((s,r)=>s+(Number(r.kwh)||0),0);
+  const ac=a.reduce((s,r)=>s+(Number(r.cost)||0),0);
+  const bk=b.reduce((s,r)=>s+(Number(r.kwh)||0),0);
+  const bc=b.reduce((s,r)=>s+(Number(r.cost)||0),0);
+  const au=ak>0?ac/ak:Infinity;
+  const bu=bk>0?bc/bk:Infinity;
+  return au-bu;
+});
+  $("placeTable").innerHTML=placeEntries.map(([k,rs])=>{
     const kwh=rs.reduce((s,r)=>s+(r.kwh||0),0), cost=rs.reduce((s,r)=>s+(r.cost||0),0);
     return `<tr><td>${escapeHtml(k)}</td><td>${rs.length}</td><td>${kwh.toFixed(1)}</td><td>${yen(cost)}</td><td>${kwh?(cost/kwh).toFixed(1):"-"}</td></tr>`;
   }).join("") || `<tr><td colspan="5">データなし</td></tr>`;
