@@ -78,7 +78,8 @@
           <label>充電場所</label>
           <input id="place" list="places" placeholder="例：U_PLACE" />
           <datalist id="places"></datalist>
-        </div>
+          <div id="lastInfo" style="margin-top:8px;font-size:13px;color:#64748b;display:none;"></div>
+          </div>
         <div>
           <label>種別</label>
           <select id="type">
@@ -229,6 +230,8 @@ function refreshCalc(){
 }
 ["startPct","endPct","kwh","cost","minutes"].forEach(id=>$(id).addEventListener("input",refreshCalc));
 $("place").addEventListener("change",()=>{
+const info=$("lastInfo");
+info.style.display="none";
   const place=$("place").value.trim();
   if(!place) return;
 
@@ -240,7 +243,10 @@ $("place").addEventListener("change",()=>{
 
   if(last.type) $("type").value=last.type;
   if(last.power!=null) $("power").value=last.power;
-
+　　
+const unit=(last.kwh!=null&&last.kwh>0&&last.cost!=null)?(last.cost/last.kwh).toFixed(1):null;
+info.textContent=`前回：${last.power!=null?last.power+"kW":"－"} ／ ${last.minutes!=null?last.minutes+"分":"－"} ／ ${last.cost!=null?"¥"+Number(last.cost).toLocaleString():"－"} ／ ${unit!=null?unit+"円/kWh":"－"}`;
+info.style.display="block";
   refreshCalc();
 });
 $("saveBtn").addEventListener("click",()=>{
