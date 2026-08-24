@@ -388,14 +388,42 @@ $("date").addEventListener("change",refreshOdoDiff);
   $("sKwh").textContent=totalKwh.toFixed(1);
   $("sCost").textContent=yen(totalCost);
   $("sAvg").textContent=totalKwh? (totalCost/totalKwh).toFixed(1)+"円":"-";
-　　const odoList=arr
-  .map(r=>Number(r.odo))
-  .filter(v=>Number.isFinite(v)&&v>0)
-  .sort((a,b)=>a-b);
+　　const odoRecords=arr
+  .filter(r=>r.odo!=null&&Number(r.odo)>0)
+  .sort((a,b)=>
+    (a.date||"").localeCompare(b.date||"") ||
+    (a.id||0)-(b.id||0)
+  );
 
-const totalKm=odoList.length>=2
-  ? odoList[odoList.length-1]-odoList[0]
-  : 0;
+const lastOdo=odoRecords.length
+  ? Number(odoRecords[odoRecords.length-1].odo)
+  : null;
+
+const monthStart=m ? m+"-01" : "";
+
+const prevRecord=[...records]
+  .filter(r=>
+    r.odo!=null &&
+    Number(r.odo)>0 &&
+    monthStart &&
+    (r.date||"")<monthStart
+  )
+  .sort((a,b)=>
+    (b.date||"").localeCompare(a.date||"") ||
+    (b.id||0)-(a.id||0)
+  )[0];
+
+let totalKm=0;
+
+if(lastOdo!==null){
+  if(prevRecord){
+    totalKm=lastOdo-Number(prevRecord.odo);
+  }else if(odoRecords.length>=2){
+    totalKm=lastOdo-Number(odoRecords[0].odo);
+  }
+}
+
+if(totalKm<0) totalKm=0;
 
 const costPerKm=totalKm>0
   ? totalCost/totalKm
@@ -403,6 +431,7 @@ const costPerKm=totalKm>0
 
 $("statCostPerKm").textContent=
   costPerKm!==null ? costPerKm.toFixed(2)+"円" : "-";
+  
   const validPower=arr.filter(r=>r.kwh!=null&&r.kwh>0&&r.minutes!=null&&r.minutes>0);
 const totalMinutes=validPower.reduce((s,r)=>s+Number(r.minutes),0);
 const powerKwh=validPower.reduce((s,r)=>s+Number(r.kwh),0);
