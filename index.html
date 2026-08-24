@@ -169,6 +169,7 @@
         <div class="stat"><div class="v" id="sAvg">-</div><div class="k">平均 円/kWh</div></div>
         <div class="stat"><div class="v" id="statAvgPower">-</div><div>平均充電出力 kW</div></div>
 <div class="stat"><div class="v" id="statTypeCount">-</div><div>急速／普通 回数</div></div>
+     <div class="stat"><div class="v" id="statCostPerKm">-</div><div>1kmあたり充電コスト</div></div>
       </div>
     </div>
 
@@ -346,7 +347,10 @@ function renderSummary(){
   $("sKwh").textContent=totalKwh.toFixed(1);
   $("sCost").textContent=yen(totalCost);
   $("sAvg").textContent=totalKwh? (totalCost/totalKwh).toFixed(1)+"円":"-";
-　　const validPower=arr.filter(r=>r.kwh!=null&&r.kwh>0&&r.minutes!=null&&r.minutes>0);
+　　const totalKm=arr.reduce((s,r)=>s+(Number(r.odo)||0),0);
+const costPerKm=totalKm>0?totalCost/totalKm:null;
+$("statCostPerKm").textContent=costPerKm!=null?costPerKm.toFixed(1)+"円/km":"-";
+  const validPower=arr.filter(r=>r.kwh!=null&&r.kwh>0&&r.minutes!=null&&r.minutes>0);
 const totalMinutes=validPower.reduce((s,r)=>s+Number(r.minutes),0);
 const powerKwh=validPower.reduce((s,r)=>s+Number(r.kwh),0);
 const avgPower=totalMinutes>0?powerKwh/(totalMinutes/60):null;
