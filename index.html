@@ -125,8 +125,9 @@
           <input id="cost" type="number" inputmode="numeric" min="0" placeholder="例：500" />
         </div>
         <div>
-          <label>走行距離（km）</label>
+          <label>現在の走行距離（km）</label>
           <input id="odo" type="number" inputmode="numeric" min="0" placeholder="任意" />
+          <div id="odoDiff" style="margin-top:8px;font-size:13px;color:#64748b;display:none;"></div>
         </div>
         <div class="full">
           <label>メモ</label>
@@ -338,7 +339,47 @@ window.editRec=id=>{
 function groupBy(arr,keyFn){
   return arr.reduce((m,r)=>{const k=keyFn(r);(m[k]??=[]).push(r);return m;},{});
 }
-function renderSummary(){
+　　function refreshOdoDiff(){
+  const current=num("odo");
+  const box=$("odoDiff");
+
+  box.style.display="none";
+  if(current===null) return;
+
+  const d=$("date").value;
+
+  const prev=[...records]
+    .filter(r=>
+      r.odo!=null &&
+      Number(r.odo)>0 &&
+      (!d || !r.date || r.date<=d)
+    )
+    .sort((a,b)=>
+      (b.date||"").localeCompare(a.date||"") ||
+      (b.id||0)-(a.id||0)
+    )[0];
+
+  if(!prev){
+    box.textContent="前回の走行距離：未登録";
+    box.style.display="block";
+    return;
+  }
+
+  const prevOdo=Number(prev.odo);
+  const diff=current-prevOdo;
+
+  if(diff<0){
+    box.textContent=`前回：${prevOdo.toLocaleString()}km ／ 入力値を確認してください`;
+  }else{
+    box.textContent=`前回：${prevOdo.toLocaleString()}km ／ 前回から：${diff.toLocaleString()}km`;
+  }
+
+  box.style.display="block";
+}
+
+$("odo").addEventListener("input",refreshOdoDiff);
+$("date").addEventListener("change",refreshOdoDiff);
+  function renderSummary(){
   const m=$("monthPicker").value;
   const arr=records.filter(r=>!m || r.date.startsWith(m));
   const totalKwh=arr.reduce((s,r)=>s+(r.kwh||0),0);
