@@ -172,6 +172,7 @@
 <div class="stat"><div class="v" id="statTypeCount">-</div><div>急速／普通 回数</div></div>
      <div class="stat"><div class="v" id="statCostPerKm">-</div><div>充電コスト 円/km</div></div>
      <div class="stat"><div class="v" id="statMonthlyKm">-</div><div>月間走行距離 km</div></div>
+     <div class="stat"><div class="v" id="statEfficiency">-</div><div>電費 km/kWh</div></div>
       </div>
     </div>
 
@@ -433,7 +434,9 @@ const costPerKm=totalKm>0
 $("statCostPerKm").textContent=
   costPerKm!==null ? costPerKm.toFixed(2)+"円" : "-";
   $("statMonthlyKm").textContent=totalKm>0 ? totalKm.toLocaleString() : "-";
-  const validPower=arr.filter(r=>r.kwh!=null&&r.kwh>0&&r.minutes!=null&&r.minutes>0);
+  const efficiency=totalKm>0&&totalKwh>0 ? totalKm/totalKwh : null;
+$("statEfficiency").textContent=efficiency!==null ? efficiency.toFixed(2) : "-";
+    const validPower=arr.filter(r=>r.kwh!=null&&r.kwh>0&&r.minutes!=null&&r.minutes>0);
 const totalMinutes=validPower.reduce((s,r)=>s+Number(r.minutes),0);
 const powerKwh=validPower.reduce((s,r)=>s+Number(r.kwh),0);
 const avgPower=totalMinutes>0?powerKwh/(totalMinutes/60):null;
