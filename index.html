@@ -174,6 +174,7 @@
      <div class="stat"><div class="v" id="statMonthlyKm">-</div><div>月間走行距離 km</div></div>
      <div class="stat"><div class="v" id="statEfficiency">-</div><div>電費 km/kWh</div></div>
      <div class="stat"><div class="v" id="statSaving">-</div><div>ガソリン車比 節約額</div></div>
+    <div class="stat"><div class="v" id="statAnnualSaving">-</div><div>年間換算 節約額</div></div>
       </div>
     </div>
 
@@ -442,7 +443,9 @@ const gasPrice=160;
 const gasCost=totalKm>0 ? (totalKm/gasMileage)*gasPrice : 0;
 const saving=totalKm>0 ? gasCost-totalCost : null;
 $("statSaving").textContent=saving!==null ? yen(Math.round(saving)) : "-";
-    const validPower=arr.filter(r=>r.kwh!=null&&r.kwh>0&&r.minutes!=null&&r.minutes>0);
+const annualSaving=saving!==null ? saving*12 : null;
+$("statAnnualSaving").textContent=annualSaving!==null ? yen(Math.round(annualSaving)) : "-";
+const validPower=arr.filter(r=>r.kwh!=null&&r.kwh>0&&r.minutes!=null&&r.minutes>0);
 const totalMinutes=validPower.reduce((s,r)=>s+Number(r.minutes),0);
 const powerKwh=validPower.reduce((s,r)=>s+Number(r.kwh),0);
 const avgPower=totalMinutes>0?powerKwh/(totalMinutes/60):null;
