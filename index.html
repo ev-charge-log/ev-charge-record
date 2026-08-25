@@ -177,7 +177,15 @@
     <div class="stat"><div class="v" id="statAnnualSaving">-</div><div>年間換算 節約額</div></div>
       </div>
     </div>
+　　　<div class="card">
+  <h2>ガソリン車 比較設定</h2>
 
+  <label>比較する燃費（km/L）</label>
+  <input id="gasMileage" type="number" step="0.1" value="10">
+
+  <label>ガソリン価格（円/L）</label>
+  <input id="gasPrice" type="number" step="1" value="160">
+</div>
     <div class="card">
       <h2>充電場所別</h2>
       <div class="table-wrap">
@@ -214,7 +222,21 @@ const today = new Date();
 $("date").value = today.toISOString().slice(0,10);
 $("monthPicker").value = today.toISOString().slice(0,7);
 
-function saveStore(){
+const savedGasMileage=localStorage.getItem("gasMileage");
+const savedGasPrice=localStorage.getItem("gasPrice");
+
+$("gasMileage").value=savedGasMileage||"10";
+$("gasPrice").value=savedGasPrice||"160"
+$("gasMileage").addEventListener("input",()=>{
+  localStorage.setItem("gasMileage",$("gasMileage").value);
+  renderSummary();
+});
+
+$("gasPrice").addEventListener("input",()=>{
+  localStorage.setItem("gasPrice",$("gasPrice").value);
+  renderSummary();
+});
+  function saveStore(){
   localStorage.setItem(KEY,JSON.stringify(records));
   refreshPlaces();
 }
@@ -438,8 +460,8 @@ $("statCostPerKm").textContent=
   $("statMonthlyKm").textContent=totalKm>0 ? totalKm.toLocaleString() : "-";
   const efficiency=totalKm>0&&totalKwh>0 ? totalKm/totalKwh : null;
 $("statEfficiency").textContent=efficiency!==null ? efficiency.toFixed(2) : "-";
-   const gasMileage=10;
-const gasPrice=160;
+const gasMileage=Number($("gasMileage").value)||10;
+const gasPrice=Number($("gasPrice").value)||160;
 const gasCost=totalKm>0 ? (totalKm/gasMileage)*gasPrice : 0;
 const saving=totalKm>0 ? gasCost-totalCost : null;
 $("statSaving").textContent=saving!==null ? yen(Math.round(saving)) : "-";
