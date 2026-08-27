@@ -308,6 +308,16 @@ info.style.display="block";
   refreshCalc();
 });
 $("saveBtn").addEventListener("click",()=>{
+const s=num("startPct");
+const e=num("endPct");
+const inputKwh=num("kwh");
+const gainPct=(s!==null&&e!==null) ? e-s : null;
+const estimatedKwh=(gainPct!==null&&gainPct>0)
+  ? 40*gainPct/100
+  : null;
+const saveKwh=(inputKwh!==null&&inputKwh>0)
+  ? inputKwh
+  : estimatedKwh;
   const rec={
     id:Date.now(),
     date:$("date").value,
@@ -317,7 +327,7 @@ $("saveBtn").addEventListener("click",()=>{
     startPct:num("startPct"),
     endPct:num("endPct"),
     minutes:num("minutes"),
-    kwh:num("kwh"),
+    kwh:saveKwh,
     cost:num("cost"),
     odo:num("odo"),
     memo:$("memo").value.trim()
