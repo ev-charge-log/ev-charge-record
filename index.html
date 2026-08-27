@@ -680,24 +680,8 @@ $("statTypeCount").textContent=`急速 ${rapidCount}回／普通 ${normalCount}�
   }).join("") || `<tr><td colspan="4">データなし</td></tr>`;
 }
 function renderPlaces(){
-  const unique=[...new Set(
-    records.map(r=>r.place).filter(Boolean)
-  )];
-
-  $("places").innerHTML=unique
-    .map(p=>`<option value="${p}"></option>`)
-    .join("");
-
-  $("placeButtons").innerHTML=unique
-    .map(p=>`<button type="button" class="chip" data-place="${p}">${p}</button>`)
-    .join("");
-
-  document.querySelectorAll("#placeButtons [data-place]").forEach(btn=>{
-    btn.addEventListener("click",()=>{
-      $("place").value=btn.dataset.place;
-      $("place").dispatchEvent(new Event("change"));
-    });
-  });
+  const unique=[...new Set(records.map(r=>r.place).filter(Boolean))];
+  $("places").innerHTML=unique.map(p=>`<option value="${p}"></option>`).join("");
 }
 function renderAll(){ renderHistory(); renderSummary(); renderPlaces(); }
 
