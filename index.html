@@ -163,6 +163,10 @@
     <div class="card">
       <h2>月別集計</h2>
       <div class="toolbar"><input id="monthPicker" type="month" /></div>
+     <div style="margin:12px 0;">
+  <label>月初基準ODO（km）</label>
+  <input id="monthStartOdo" type="number" placeholder="例：33120">
+</div>
       <div class="stats">
         <div class="stat"><div class="v" id="sCount">0</div><div class="k">充電回数</div></div>
         <div class="stat"><div class="v" id="sKwh">0.0</div><div class="k">充電量 kWh</div></div>
@@ -232,8 +236,28 @@ refreshPlaces();
 const today = new Date();
 $("date").value = today.toISOString().slice(0,10);
 $("monthPicker").value = today.toISOString().slice(0,7);
+function getMonthStartOdoKey(){
+  return "monthStartOdo_" + $("monthPicker").value;
+}
 
-const savedGasMileage=localStorage.getItem("gasMileage");
+function loadMonthStartOdo(){
+  const v=localStorage.getItem(getMonthStartOdoKey());
+  $("monthStartOdo").value=v===null ? "" : v;
+}
+
+$("monthStartOdo").addEventListener("input",()=>{
+  const v=$("monthStartOdo").value.trim();
+
+  if(v===""){
+    localStorage.removeItem(getMonthStartOdoKey());
+  }else{
+    localStorage.setItem(getMonthStartOdoKey(),v);
+  }
+
+  renderSummary();
+});
+loadMonthStartOdo();
+  const savedGasMileage=localStorage.getItem("gasMileage");
 const savedGasPrice=localStorage.getItem("gasPrice");
 
 $("gasMileage").value=savedGasMileage||"10";
@@ -478,9 +502,11 @@ const prevRecord=[...records]
   )[0];
 
 let totalKm=0;
-
+const manualMonthStartOdo=Number($("monthStartOdo").value);
 if(lastOdo!==null){
-  if(prevRecord){
+  if(manualMonthStartOdo>0){
+    totalKm=lastOdo-manualMonthStartOdo;
+  }else if(prevRecord){
     totalKm=lastOdo-Number(prevRecord.odo);
   }else if(odoRecords.length>=2){
     totalKm=lastOdo-Number(odoRecords[0].odo);
@@ -632,7 +658,10 @@ function renderAll(){ renderHistory(); renderSummary(); renderPlaces(); }
 
 $("search").addEventListener("input",renderHistory);
 $("filterType").addEventListener("change",renderHistory);
-$("monthPicker").addEventListener("change",renderSummary);
+$("monthPicker").addEventListener("change",()=>{
+  loadMonthStartOdo();
+  renderSummary();
+});
 
 document.querySelectorAll(".tab").forEach(btn=>btn.addEventListener("click",()=>{
   document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));
