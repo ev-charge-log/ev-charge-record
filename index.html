@@ -244,7 +244,7 @@ function getMonthStartOdoKey(){
 function loadMonthStartOdo(){
   const key=getMonthStartOdoKey();
   const saved=localStorage.getItem(key);
-
+そ
   // 手入力済みなら、その値を最優先
   if(saved!==null){
     $("monthStartOdo").value=saved;
@@ -350,7 +350,7 @@ info.style.display="none";
 
   if(last.type) $("type").value=last.type;
   if(last.power!=null) $("power").value=last.power;
-　　
+　if(last.minutes!=null) $("minutes").value=last.minutes;　
 const unit=(last.kwh!=null&&last.kwh>0&&last.cost!=null)?(last.cost/last.kwh).toFixed(1):null;
 info.textContent=`前回：${last.power!=null?last.power+"kW":"－"} ／ ${last.minutes!=null?last.minutes+"分":"－"} ／ ${last.cost!=null?"¥"+Number(last.cost).toLocaleString():"－"} ／ ${unit!=null?unit+"円/kWh":"－"}`;
 info.style.display="block";
