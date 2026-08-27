@@ -244,7 +244,7 @@ function getMonthStartOdoKey(){
 function loadMonthStartOdo(){
   const key=getMonthStartOdoKey();
   const saved=localStorage.getItem(key);
-そ
+
   // 手入力済みなら、その値を最優先
   if(saved!==null){
     $("monthStartOdo").value=saved;
