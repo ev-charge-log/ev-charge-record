@@ -241,8 +241,32 @@ function getMonthStartOdoKey(){
 }
 
 function loadMonthStartOdo(){
-  const v=localStorage.getItem(getMonthStartOdoKey());
-  $("monthStartOdo").value=v===null ? "" : v;
+  const key=getMonthStartOdoKey();
+  const saved=localStorage.getItem(key);
+
+  // 手入力済みなら、その値を最優先
+  if(saved!==null){
+    $("monthStartOdo").value=saved;
+    return;
+  }
+
+  // 未入力なら、選択月より前の最新ODOを探す
+  const month=$("monthPicker").value;
+  const monthStart=month ? month+"-01" : "";
+
+  const prev=[...records]
+    .filter(r=>
+      r.odo!==null &&
+      Number(r.odo)>0 &&
+      monthStart &&
+      (r.date||"")<monthStart
+    )
+    .sort((a,b)=>
+      (b.date||"").localeCompare(a.date||"") ||
+      (b.id||0)-(a.id||0)
+    )[0];
+
+  $("monthStartOdo").value=prev ? Number(prev.odo) : "";
 }
 
 $("monthStartOdo").addEventListener("input",()=>{
