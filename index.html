@@ -78,6 +78,7 @@
           <label>充電場所</label>
           <input id="place" list="places" placeholder="例：U_PLACE" />
           <datalist id="places"></datalist>
+          <div id="placeButtons" class="chips" style="margin-top:8px;"></div>
           <div id="lastInfo" style="margin-top:8px;font-size:13px;color:#64748b;display:none;"></div>
           </div>
         <div>
@@ -679,8 +680,24 @@ $("statTypeCount").textContent=`急速 ${rapidCount}回／普通 ${normalCount}�
   }).join("") || `<tr><td colspan="4">データなし</td></tr>`;
 }
 function renderPlaces(){
-  const unique=[...new Set(records.map(r=>r.place).filter(Boolean))].sort();
-  $("places").innerHTML=unique.map(p=>`<option value="${escapeHtml(p)}"></option>`).join("");
+  const unique=[...new Set(
+    records.map(r=>r.place).filter(Boolean)
+  )];
+
+  $("places").innerHTML=unique
+    .map(p=>`<option value="${p}"></option>`)
+    .join("");
+
+  $("placeButtons").innerHTML=unique
+    .map(p=>`<button type="button" class="chip" data-place="${p}">${p}</button>`)
+    .join("");
+
+  document.querySelectorAll("#placeButtons [data-place]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      $("place").value=btn.dataset.place;
+      $("place").dispatchEvent(new Event("change"));
+    });
+  });
 }
 function renderAll(){ renderHistory(); renderSummary(); renderPlaces(); }
 
