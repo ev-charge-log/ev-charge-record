@@ -688,7 +688,7 @@ function renderPlaces(){
     .map(p=>`<option value="${p}"></option>`)
     .join("");
 
-  $("placeButtons").innerHTML=unique.slice(-5).reverse()
+  $("placeButtons").innerHTML=unique
     .map(p=>`<button type="button" class="chip" data-place="${p}">${p}</button>`)
     .join("");
 
