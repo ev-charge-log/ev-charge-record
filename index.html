@@ -573,13 +573,14 @@ const prevYearRecord=[...records]
   )[0];
 
 let yearKmTotal=0;
-
+const yearStartOdo=Number(localStorage.getItem("monthStartOdo_"+selectedYear+"-01"));
 if(lastYearOdo!==null){
-  if(prevYearRecord){
+  if(yearStartOdo>0){
+    yearKmTotal=lastYearOdo-yearStartOdo;
+  }else if(prevYearRecord){
     yearKmTotal=lastYearOdo-Number(prevYearRecord.odo);
-  }else if(yearOdoRecords.length>=2){
-    yearKmTotal=
-      lastYearOdo-Number(yearOdoRecords[0].odo);
+  }else{
+    yearKmTotal=0;
   }
 }
 
