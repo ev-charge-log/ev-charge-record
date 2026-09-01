@@ -457,8 +457,7 @@ window.editRec=id=>{
   $("cost").value=r.cost??"";
   $("odo").value=r.odo??"";
   $("memo").value=r.memo||"";
-　$("placeMemo").value=r.placeMemo||"";
-$("placeRating").value=r.placeRating||"";
+　
   records=records.filter(x=>x.id!==id);
   saveStore();
   refreshCalc();
