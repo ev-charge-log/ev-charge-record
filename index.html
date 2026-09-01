@@ -394,7 +394,9 @@ const saveKwh=(inputKwh!==null&&inputKwh>0)
     kwh:saveKwh,
     cost:num("cost"),
     odo:num("odo"),
-    memo:$("memo").value.trim()
+    memo:$("memo").value.trim),
+    placeMemo:$("placeMemo").value.trim(),
+placeRating:$("placeRating").value
   };
   if(!rec.date || !rec.place){ alert("日付と充電場所を入力してください。"); return; }
   if(rec.startPct!==null && rec.endPct!==null && rec.endPct < rec.startPct){
@@ -402,7 +404,7 @@ const saveKwh=(inputKwh!==null&&inputKwh>0)
   }
   records.push(rec); saveStore();
   alert("保存しました。");
-  ["place","power","startPct","endPct","minutes","kwh","cost","odo","memo"].forEach(id=>$(id).value="");
+　 ["place","power","startPct","endPct","minutes","kwh","cost","odo","memo","placeMemo","placeRating"].forEach(id=>$(id).value="");
   refreshCalc(); renderAll();
 });
 
