@@ -434,8 +434,7 @@ function renderHistory(){
   ? `<span class="chip">ODO ${Number(r.odo).toLocaleString()}km</span>`
   : ""}
       </div>
-    ${r.placeRating ? `<span class="chip">⭐ ${escapeHtml(r.placeRating)}</span>` : ""}
-${r.placeMemo ? `<div style="margin-top:8px;font-size:13px;">📍 ${escapeHtml(r.placeMemo)}</div>` : ""}
+    
       ${r.memo?`<div style="margin-top:8px;font-size:12px;color:#64748b">${escapeHtml(r.memo)}</div>`:""}
       <div class="row-actions">
   <button onclick="editRec(${r.id})">編集</button>
