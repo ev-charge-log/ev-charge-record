@@ -749,18 +749,41 @@ renderAll();
 refreshCalc();
 
 if("serviceWorker" in navigator){ navigator.serviceWorker.register("./sw.js").catch(()=>{}); }
+let compressedPhotoData = "";
+
 $("placePhoto").addEventListener("change", function(){
   const file = this.files[0];
   const preview = $("photoPreview");
 
   if(!file){
+    compressedPhotoData = "";
     preview.style.display = "none";
     preview.src = "";
     return;
   }
 
-  preview.src = URL.createObjectURL(file);
-  preview.style.display = "block";
+  const img = new Image();
+
+  img.onload = function(){
+    const maxWidth = 1280;
+    const scale = Math.min(1, maxWidth / img.width);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.round(img.width * scale);
+    canvas.height = Math.round(img.height * scale);
+
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+    compressedPhotoData = canvas.toDataURL("image/jpeg", 0.75);
+
+    preview.src = compressedPhotoData;
+    preview.style.display = "block";
+
+    URL.revokeObjectURL(img.src);
+  };
+
+  img.src = URL.createObjectURL(file);
 });
 </script>
 </body>
