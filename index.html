@@ -452,7 +452,21 @@ function renderHistory(){
 </div>
     </div>`).join("") : '<div class="empty">まだ記録がありません。</div>';
 }
-window.editRec=id=>{
+async function renderHistoryPhotos(){
+  for(const r of records){
+    const box=document.getElementById(`historyPhoto-${r.id}`);
+    if(!box) continue;
+
+    const photo=await getPhotoById(r.id);
+
+    if(photo){
+      box.innerHTML=`<img src="${photo}" style="width:100%;margin-top:10px;border-radius:12px;display:block;">`;
+    }else{
+      box.innerHTML="";
+    }
+  }
+}
+  window.editRec=id=>{
   const r=records.find(x=>x.id===id);
   if(!r) return;
 
