@@ -859,6 +859,13 @@ $("placePhoto").addEventListener("change", function(){
 
   img.src = URL.createObjectURL(file);
 });
+$("removePhotoBtn").addEventListener("click", ()=>{
+  compressedPhotoData = null;
+  $("placePhoto").value = "";
+  $("photoPreview").src = "";
+  $("photoPreview").style.display = "none";
+  $("removePhotoBtn").style.display = "none";
+});
 </script>
 </body>
 </html>
