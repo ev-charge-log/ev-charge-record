@@ -500,7 +500,12 @@ $("placeRating").value=r.placeRating||"";
   window.scrollTo({top:0,behavior:"smooth"});
 };window.deleteRec=id=>{
   if(confirm("この記録を削除しますか？")){
-    records=records.filter(r=>r.id!==id); saveStore(); renderAll();
+    records=records.filter(r=>r.id!==id);
+    if(photoDB){
+  const tx=photoDB.transaction("photos","readwrite");
+  tx.objectStore("photos").delete(id);
+}
+    saveStore(); renderAll();
   }
 };
 
