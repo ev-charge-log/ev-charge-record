@@ -767,7 +767,47 @@ $("clearBtn").addEventListener("click",()=>{
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
 renderAll();
 refreshCalc();
+let photoDB;
 
+const photoDBRequest = indexedDB.open("EVChargePhotos", 1);
+
+photoDBRequest.onupgradeneeded = function(event){
+  photoDB = event.target.result;
+
+  if(!photoDB.objectStoreNames.contains("photos")){
+    photoDB.createObjectStore("photos", {keyPath:"id"});
+  }
+};
+
+photoDBRequest.onsuccess = function(event){
+  photoDB = event.target.result;
+  renderHistoryPhotos();
+};
+
+photoDBRequest.onerror = function(){
+  photoDB = null;
+};
+
+function getPhotoById(id){
+  return new Promise((resolve)=>{
+    if(!photoDB){
+      resolve("");
+      return;
+    }
+
+    const tx = photoDB.transaction("photos", "readonly");
+    const store = tx.objectStore("photos");
+    const req = store.get(id);
+
+    req.onsuccess = function(){
+      resolve(req.result ? req.result.data : "");
+    };
+
+    req.onerror = function(){
+      resolve("");
+    };
+  });
+}
 if("serviceWorker" in navigator){ navigator.serviceWorker.register("./sw.js").catch(()=>{}); }
 let compressedPhotoData = "";
 
