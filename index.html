@@ -726,7 +726,12 @@ function renderPlaces(){
   const unique=[...new Set(records.map(r=>r.place).filter(Boolean))];
   $("places").innerHTML=unique.map(p=>`<option value="${p}"></option>`).join("");
 }
-function renderAll(){ renderHistory(); renderSummary(); renderPlaces(); }
+function renderAll(){
+  renderHistory();
+  renderSummary();
+  renderPlaces();
+  renderHistoryPhotos();
+}
 
 $("search").addEventListener("input",renderHistory);
 $("filterType").addEventListener("change",renderHistory);
