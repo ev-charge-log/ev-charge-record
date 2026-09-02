@@ -155,7 +155,8 @@
   <div style="font-size:12px;color:#64748b;margin-top:6px;">
     充電器や駐車位置が分かる写真を1枚
   </div>
-</div>
+　<img id="photoPreview" style="display:none;width:100%;max-height:220px;object-fit:cover;border-radius:12px;margin-top:10px;">
+   </div>
       </div>
     </div>
 
@@ -748,6 +749,19 @@ renderAll();
 refreshCalc();
 
 if("serviceWorker" in navigator){ navigator.serviceWorker.register("./sw.js").catch(()=>{}); }
+$("placePhoto").addEventListener("change", function(){
+  const file = this.files[0];
+  const preview = $("photoPreview");
+
+  if(!file){
+    preview.style.display = "none";
+    preview.src = "";
+    return;
+  }
+
+  preview.src = URL.createObjectURL(file);
+  preview.style.display = "block";
+});
 </script>
 </body>
 </html>
