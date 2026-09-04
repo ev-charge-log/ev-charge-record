@@ -426,7 +426,13 @@ const saveKwh=(inputKwh!==null&&inputKwh>0)
   }
 }
   alert("保存しました。");
-　 ["place","power","startPct","endPct","minutes","kwh","cost","odo","memo","placeMemo","placeRating"].forEach(id=>$(id).value="");
+　compressedPhotoData = "";
+editingPhotoId = null;
+$("placePhoto").value = "";
+$("photoPreview").src = "";
+$("photoPreview").style.display = "none";
+$("removePhotoBtn").style.display = "none";
+  ["place","power","startPct","endPct","minutes","kwh","cost","odo","memo","placeMemo","placeRating"].forEach(id=>$(id).value="");
   refreshCalc(); renderAll();
 });
 
