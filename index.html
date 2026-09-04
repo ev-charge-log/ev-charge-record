@@ -412,14 +412,18 @@ const saveKwh=(inputKwh!==null&&inputKwh>0)
     if(!confirm("終了時％が開始時％より小さいです。このまま保存しますか？")) return;
   }
   records.push(rec); saveStore();
-  if(compressedPhotoData && photoDB){
+  if(photoDB){
   const tx = photoDB.transaction("photos","readwrite");
   const store = tx.objectStore("photos");
 
-  store.put({
-    id: rec.id,
-    data: compressedPhotoData
-  });
+  if(compressedPhotoData){
+    store.put({
+      id: rec.id,
+      data: compressedPhotoData
+    });
+  }else if(editingPhotoId){
+    store.delete(editingPhotoId);
+  }
 }
   alert("保存しました。");
 　 ["place","power","startPct","endPct","minutes","kwh","cost","odo","memo","placeMemo","placeRating"].forEach(id=>$(id).value="");
