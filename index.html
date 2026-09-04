@@ -476,6 +476,7 @@ async function renderHistoryPhotos(){
   }
 }
   window.editRec=id=>{
+  editingPhotoId = id;
   const r=records.find(x=>x.id===id);
   if(!r) return;
 
@@ -494,9 +495,28 @@ async function renderHistoryPhotos(){
 $("placeRating").value=r.placeRating||"";
   records=records.filter(x=>x.id!==id);
   saveStore();
+ 
   refreshCalc();
 
-  document.querySelector('[data-target="inputSec"]').click();
+getPhotoById(id).then(photo=>{
+  const preview=$("photoPreview");
+  const removeBtn=$("removePhotoBtn");
+
+  if(photo){
+    compressedPhotoData=photo;
+    preview.src=photo;
+    preview.style.display="block";
+    removeBtn.style.display="block";
+  }else{
+    compressedPhotoData="";
+    preview.src="";
+    preview.style.display="none";
+    removeBtn.style.display="none";
+  }
+});
+
+document.querySelector('[data-target="inputSec"]').click();
+
   window.scrollTo({top:0,behavior:"smooth"});
 };window.deleteRec=id=>{
   if(confirm("この記録を削除しますか？")){
@@ -824,7 +844,8 @@ function getPhotoById(id){
 }
 if("serviceWorker" in navigator){ navigator.serviceWorker.register("./sw.js").catch(()=>{}); }
 let compressedPhotoData = "";
-
+let editingPhotoId = null;
+  
 $("placePhoto").addEventListener("change", function(){
   const file = this.files[0];
   const preview = $("photoPreview");
