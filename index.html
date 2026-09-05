@@ -577,9 +577,15 @@ async function renderHistoryPhotos(){
   $("odo").value=r.odo??"";
   $("memo").value=r.memo||"";
 　$("placeMemo").value=r.placeMemo||"";
-$("placeRating").value=r.placeRating||"";
+　$("placeRating").value=r.placeRating||"";
   $("latitude").value=r.latitude??"";
-$("longitude").value=r.longitude??"";
+　$("longitude").value=r.longitude??"";
+   if(r.latitude!=null && r.longitude!=null){
+  $("locationInfo").textContent=
+    `登録済み 📍 緯度 ${Number(r.latitude).toFixed(5)} / 経度 ${Number(r.longitude).toFixed(5)}`;
+}else{
+  $("locationInfo").textContent="位置情報は未取得です";
+}
     records=records.filter(x=>x.id!==id);
   saveStore();
  
