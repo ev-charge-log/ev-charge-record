@@ -52,6 +52,8 @@
     .toolbar select,.toolbar input{font-size:14px;padding:9px}
     @media(max-width:560px){.grid{grid-template-columns:1fr}.full{grid-column:auto}.stats{grid-template-columns:1fr 1fr}nav{top:60px}}
   </style>
+　<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
 <header>
@@ -252,6 +254,7 @@
   <div class="card">
     <h2>充電スポットマップ</h2>
     <p class="muted">充電した場所を地図に記録します。</p>
+　　　<div id="map" style="height:420px;border-radius:14px;margin-top:12px;"></div>
   </div>
 </section>
 </main>
