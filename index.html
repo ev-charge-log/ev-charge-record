@@ -434,6 +434,8 @@ const saveKwh=(inputKwh!==null&&inputKwh>0)
     id:Date.now(),
     date:$("date").value,
     place:$("place").value.trim(),
+    latitude:num("latitude"),
+　　　longitude:num("longitude"),
     type:$("type").value,
     power:num("power"),
     startPct:num("startPct"),
@@ -543,7 +545,9 @@ async function renderHistoryPhotos(){
   $("memo").value=r.memo||"";
 　$("placeMemo").value=r.placeMemo||"";
 $("placeRating").value=r.placeRating||"";
-  records=records.filter(x=>x.id!==id);
+  $("latitude").value=r.latitude??"";
+$("longitude").value=r.longitude??"";
+    records=records.filter(x=>x.id!==id);
   saveStore();
  
   refreshCalc();
