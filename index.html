@@ -278,29 +278,49 @@
 
 <script>
 let map = null;
-
+let mapMarkers = [];
 function initMap(){
-  if(map) return;
 
-  map = L.map("map").setView([35.9251, 139.4858], 11);
+  if(!map){
+    map = L.map("map").setView([35.9251, 139.4858], 11);
 
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 19,
-    attribution: "&copy; OpenStreetMap contributors"
-  }).addTo(map);
-　　records.forEach(r=>{
-  if(r.latitude!=null && r.longitude!=null){
-
-    L.marker([r.latitude, r.longitude])
-      .addTo(map)
-      .bindPopup(`
-        <b>${r.place || "充電場所"}</b><br>
-        ${r.date || ""}<br>
-        ${r.type || ""} ${r.power ? r.power+"kW" : ""}
-      `);
-
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: "&copy; OpenStreetMap contributors"
+    }).addTo(map);
   }
-});
+
+  mapMarkers.forEach(marker => map.removeLayer(marker));
+  mapMarkers = [];
+
+  const points = [];
+
+  records.forEach(r=>{
+    if(r.latitude != null && r.longitude != null){
+
+      const lat = Number(r.latitude);
+      const lng = Number(r.longitude);
+
+      if(!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+
+      const marker = L.marker([lat, lng])
+        .addTo(map)
+        .bindPopup(`
+          <b>${r.place || "充電場所"}</b><br>
+          ${r.date || ""}<br>
+          ${r.type || ""} ${r.power ? r.power+"kW" : ""}
+        `);
+
+      mapMarkers.push(marker);
+      points.push([lat, lng]);
+    }
+  });
+
+  if(points.length === 1){
+    map.setView(points[0], 15);
+  }else if(points.length > 1){
+    map.fitBounds(points, {padding:[30,30]});
+  }
 }
 const KEY = "evChargeRecordsV1";
 let records = JSON.parse(localStorage.getItem(KEY) || "[]");
