@@ -997,6 +997,48 @@ $("removePhotoBtn").addEventListener("click", ()=>{
   $("photoPreview").style.display = "none";
   $("removePhotoBtn").style.display = "none";
 });
+  $("getAddressLocationBtn").addEventListener("click", async ()=>{
+  const info = $("locationInfo");
+  const address = $("addressInput").value.trim();
+
+  if(!address){
+    info.textContent = "住所を入力してください";
+    return;
+  }
+
+  info.textContent = "住所から位置を検索しています…";
+
+  try{
+    const url =
+      "https://nominatim.openstreetmap.org/search?format=json&limit=1&q=" +
+      encodeURIComponent(address);
+
+    const res = await fetch(url, {
+      headers: {
+        "Accept": "application/json"
+      }
+    });
+
+    const data = await res.json();
+
+    if(!data.length){
+      info.textContent = "住所が見つかりませんでした";
+      return;
+    }
+
+    const lat = Number(data[0].lat);
+    const lng = Number(data[0].lon);
+
+    $("latitude").value = lat;
+    $("longitude").value = lng;
+
+    info.textContent =
+      `住所から取得しました 📍 緯度 ${lat.toFixed(5)} / 経度 ${lng.toFixed(5)}`;
+
+  }catch(e){
+    info.textContent = "住所から位置を取得できませんでした";
+  }
+});
   $("getLocationBtn").addEventListener("click", ()=>{
   const info = $("locationInfo");
 
