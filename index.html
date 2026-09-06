@@ -1010,8 +1010,8 @@ $("removePhotoBtn").addEventListener("click", ()=>{
 
   try{
     const url =
-      "https://nominatim.openstreetmap.org/search?format=json&limit=1&q=" +
-      encodeURIComponent(address);
+  "https://msearch.gsi.go.jp/address-search/AddressSearch?q=" +
+  encodeURIComponent(address);
 
     const res = await fetch(url, {
       headers: {
@@ -1026,8 +1026,8 @@ $("removePhotoBtn").addEventListener("click", ()=>{
       return;
     }
 
-    const lat = Number(data[0].lat);
-    const lng = Number(data[0].lon);
+    const lng = Number(data[0].geometry.coordinates[0]);
+　　　const lat = Number(data[0].geometry.coordinates[1]);
 
     $("latitude").value = lat;
     $("longitude").value = lng;
