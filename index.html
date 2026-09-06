@@ -532,7 +532,7 @@ function yen(n){ return "¥"+Math.round(n||0).toLocaleString(); }
 function renderHistory(){
   const q=$("search").value.trim().toLowerCase();
   const ft=$("filterType").value;
-  const arr=[...records].reverse().filter(r=>(!q||r.place.toLowerCase().includes(q))&&(!ft||r.type===ft));
+  const arr=[...records].sort((a,b)=>new Date(b.date)-new Date(a.date)).filter(
   $("history").innerHTML = arr.length ? arr.map(r=>`
     <div class="row">
       <div class="row-top">
