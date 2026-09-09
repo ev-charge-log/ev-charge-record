@@ -526,7 +526,7 @@ $("latitude").value = "";
 $("longitude").value = "";
 $("locationInfo").textContent = "位置情報は未取得です";
   ["place","power","startPct","endPct","minutes","kwh","cost","odo","memo","placeMemo","placeRating"].forEach(id=>$(id).value="");
-  refreshCalc(); renderAll();
+  refreshCalc(); renderAll();document.querySelector('[data-target="historySec"]').click();
 });
 
 function gain(r){ return (r.startPct!=null&&r.endPct!=null)?r.endPct-r.startPct:null; }
