@@ -570,6 +570,36 @@ arr.forEach(r=>{
   <button class="del" onclick="deleteRec(${r.id})">削除</button>
 </div>
     </div>`).join("") : '<div class="empty">まだ記録がありません。</div>';
+　　　const historyBox=$("history");
+const rows=[...historyBox.querySelectorAll(".row")];
+
+if(rows.length){
+  const months=new Map();
+
+  rows.forEach(row=>{
+    const date=row.querySelector(".date")?.textContent||"";
+    const month=date.slice(0,7)||"日付未設定";
+    if(!months.has(month)) months.set(month,[]);
+    months.get(month).push(row);
+  });
+
+  historyBox.innerHTML="";
+
+  [...months.entries()].forEach(([month,monthRows],index)=>{
+    const details=document.createElement("details");
+    if(index===0) details.open=true;
+
+    const summary=document.createElement("summary");
+    summary.textContent=
+      month==="日付未設定"
+        ? `${month}（${monthRows.length}件）`
+        : `${month.slice(0,4)}年${month.slice(5,7)}月（${monthRows.length}件）`;
+
+    details.appendChild(summary);
+    monthRows.forEach(row=>details.appendChild(row));
+    historyBox.appendChild(details);
+  });
+}
 }
 async function renderHistoryPhotos(){
   for(const r of records){
