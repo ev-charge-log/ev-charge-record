@@ -18,8 +18,7 @@
     header h1{font-size:20px;margin:0 0 4px}
     header p{margin:0;color:#cbd5e1;font-size:12px}
     nav{display:flex;gap:8px;padding:10px 14px}
-　　.main-tabs{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:8px!important;padding:10px 14px!important}
-    .main-tabs .tab{width:auto!important;min-width:0!important;margin:0!important}
+　　.main-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
     nav button{flex:1 1 0;min-width:0;margin:0!important;border:0;border-radius:10px;padding:10px 6px;background:#e2e8f0;font-weight:700;color:#334155}
     nav button.active{background:var(--accent);color:#fff}
     main{padding:14px;max-width:900px;margin:auto;padding-bottom:90px}
@@ -63,7 +62,7 @@
   <p>充電履歴・料金・効率をかんたん管理</p>
 </header>
 
-<nav class="main-tabs" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:10px 14px;">
+<nav class="main-tabs">
   <button class="tab active" data-target="inputSec">記録</button>
   <button class="tab" data-target="historySec">履歴</button>
   <button class="tab" data-target="summarySec">集計</button>
