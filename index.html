@@ -913,7 +913,27 @@ function renderPlaces(){
 });
   $("places").innerHTML=unique.map(p=>`<option value="${p}"></option>`).join("");
 }
-function renderAll(){
+　$("place").addEventListener("change",()=>{
+  const place=$("place").value.trim();
+
+  const prev=[...records]
+    .filter(r=>r.place===place && r.address)
+    .sort((a,b)=>
+      String(b.date||"").localeCompare(String(a.date||"")) ||
+      (b.id||0)-(a.id||0)
+    )[0];
+
+  if(!prev) return;
+
+  $("addressInput").value=prev.address||"";
+  $("latitude").value=prev.latitude??"";
+  $("longitude").value=prev.longitude??"";
+
+  if(prev.latitude!=null && prev.longitude!=null){
+    $("locationInfo").textContent="過去の履歴から位置情報を適用しました";
+  }
+});
+  function renderAll(){
   renderHistory();
   renderSummary();
   renderPlaces();
