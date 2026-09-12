@@ -609,12 +609,16 @@ async function renderHistoryPhotos(){
     const photo=await getPhotoById(r.id);
 
     if(photo){
-      box.innerHTML=`<img src="${photo}" style="width:120px;height:90px;object-fit:cover;margin-top:10px;border-radius:10px;display:block;">`;
+      box.innerHTML=`<img src="${photo}" onclick="openPhoto('${photo}')" style="width:120px;height:90px;object-fit:cover;margin-top:10px;border-radius:10px;display:block;cursor:pointer;">`;
     }else{
       box.innerHTML="";
     }
   }
 }
+  window.openPhoto = function(photo){
+  const w = window.open("");
+  w.document.write(`<img src="${photo}" style="width:100%;height:auto;">`);
+};
   window.editRec=id=>{
   editingPhotoId = id;
   const r=records.find(x=>x.id===id);
