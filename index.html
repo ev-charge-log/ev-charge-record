@@ -906,7 +906,11 @@ $("statTypeCount").textContent=`急速 ${rapidCount}回／普通 ${normalCount}�
   }).join("") || `<tr><td colspan="4">データなし</td></tr>`;
 }
 function renderPlaces(){
-  const unique=[...new Set(records.map(r=>r.place).filter(Boolean))];
+  const unique=[...new Set(records.map(r=>r.place).filter(Boolean))].sort((a,b)=>{
+  const aFav=records.some(r=>r.place===a && String(r.placeRating||"").includes("◎"));
+  const bFav=records.some(r=>r.place===b && String(r.placeRating||"").includes("◎"));
+  return Number(bFav)-Number(aFav);
+});
   $("places").innerHTML=unique.map(p=>`<option value="${p}"></option>`).join("");
 }
 function renderAll(){
