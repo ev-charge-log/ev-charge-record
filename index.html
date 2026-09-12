@@ -928,7 +928,8 @@ function renderPlaces(){
   $("addressInput").value=prev.address||"";
   $("latitude").value=prev.latitude??"";
   $("longitude").value=prev.longitude??"";
-
+　　$("placeRating").value=prev.placeRating||"";
+　　$("placeMemo").value=prev.placeMemo||"";
   if(prev.latitude!=null && prev.longitude!=null){
     $("locationInfo").textContent="過去の履歴から位置情報を適用しました";
   }
