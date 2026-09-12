@@ -609,7 +609,7 @@ async function renderHistoryPhotos(){
     const photo=await getPhotoById(r.id);
 
     if(photo){
-      box.innerHTML=`<img src="${photo}" style="width:120px;height:90px;object-fit:cover;margin-top:10px;border-radius:10px;display:block;
+      box.innerHTML=`<img src="${photo}" style="width:100%;margin-top:10px;border-radius:12px;display:block;
     }else{
       box.innerHTML="";
     }
