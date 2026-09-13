@@ -961,11 +961,19 @@ function renderPlaces(){
 
   const spots=buildMySpots().sort((a,b)=>Number(b.favorite)-Number(a.favorite)||String(b.lastDate||"").localeCompare(String(a.lastDate||"")));
 
-  box.innerHTML=spots.map(s=>`
-    <button type="button" onclick="selectPlaceSuggestion('${s.place.replace(/'/g,"\\'")}')">
-      ${escapeHtml(s.place)}
-    </button>
-  `).join("");
+   const favoriteSpots=spots.filter(s=>s.favorite);
+const recentSpots=spots.filter(s=>!s.favorite).slice(0,3);
+const otherSpots=spots.filter(s=>!s.favorite).slice(3);
+  const makeButtons=list=>list.map(s=>`
+  <button type="button" onclick="selectPlaceSuggestion('${s.place.replace(/'/g,"\\'")}')">
+    ${escapeHtml(s.place)}
+  </button>
+`).join("");
+
+box.innerHTML=
+  (favoriteSpots.length ? `<div><strong>⭐お気に入り</strong></div>${makeButtons(favoriteSpots)}` : "") +
+  (recentSpots.length ? `<div><strong>最近使った場所</strong></div>${makeButtons(recentSpots)}` : "") +
+  (otherSpots.length ? `<div><strong>その他</strong></div>${makeButtons(otherSpots)}` : "");
 }
   window.selectPlaceSuggestion = function(place){
   $("place").value = place;
