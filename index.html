@@ -913,6 +913,39 @@ $("statTypeCount").textContent=`急速 ${rapidCount}回／普通 ${normalCount}�
     return `<tr><td>${k==="未設定"?k:k+"kW"}</td><td>${rs.length}</td><td>${ag==null?"-":ag.toFixed(1)+"%"}</td><td>${am==null?"-":am.toFixed(0)+"分"}</td></tr>`;
   }).join("") || `<tr><td colspan="4">データなし</td></tr>`;
 }
+function buildMySpots(){
+  const spots = new Map();
+
+  [...records]
+    .sort((a,b)=>
+      String(b.date||"").localeCompare(String(a.date||"")) ||
+      (b.id||0)-(a.id||0)
+    )
+    .forEach(r=>{
+      const name=(r.place||"").trim();
+      if(!name) return;
+
+      if(!spots.has(name)){
+        spots.set(name,{
+          place:name,
+          type:r.type||"",
+          power:r.power??null,
+          address:r.address||"",
+          latitude:r.latitude??null,
+          longitude:r.longitude??null,
+          placeRating:r.placeRating||"",
+          placeMemo:r.placeMemo||"",
+          lastDate:r.date||"",
+          count:1,
+          recordId:r.id
+        });
+      }else{
+        spots.get(name).count++;
+      }
+    });
+
+  return [...spots.values()];
+}
 function renderPlaces(){
   const unique=[...new Set(records.map(r=>r.place).filter(Boolean))].sort((a,b)=>{
   const aFav=records.some(r=>r.place===a && String(r.placeRating||"").includes("◎"));
