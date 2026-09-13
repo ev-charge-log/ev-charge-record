@@ -983,9 +983,27 @@ ${s.placeMemo
   ${s.address
   ? `<div style="font-size:12px;color:#64748b;margin-top:4px;">🏠 ${escapeHtml(s.address)}</div>`
   : ""}
+      <div id="mySpotPhoto-${s.recordId}"></div> 
         </div>
       `).join("")
     : `<div style="font-size:13px;color:#64748b;">まだ登録スポットがありません。</div>`;
+}
+  async function renderMySpotPhotos(){
+  const spots=buildMySpots();
+
+  for(const s of spots){
+    const box=document.getElementById(`mySpotPhoto-${s.recordId}`);
+    if(!box) continue;
+
+    const photo=await getPhotoById(s.recordId);
+
+    if(photo){
+      box.innerHTML=`<img src="${photo}" onclick="openPhoto('${photo}')"
+        style="width:120px;height:90px;object-fit:cover;margin-top:8px;border-radius:10px;display:block;cursor:pointer;">`;
+    }else{
+      box.innerHTML="";
+    }
+  }
 }
   $("place").addEventListener("change",()=>{
   const place=$("place").value.trim();
@@ -1013,6 +1031,7 @@ ${s.placeMemo
   renderSummary();
   renderPlaces();
   renderMySpots();
+  renderMySpotPhotos();
   renderHistoryPhotos();
 }
 
