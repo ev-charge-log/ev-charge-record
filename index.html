@@ -81,6 +81,7 @@
         <div>
           <label>充電場所</label>
           <input id="place" list="places" placeholder="例：U_PLACE" />
+          <div id="placeSuggestions"></div>
           <datalist id="places"></datalist>
           <div id="placeButtons" class="chips" style="margin-top:8px;"></div>
           <div id="lastInfo" style="margin-top:8px;font-size:13px;color:#64748b;display:none;"></div>
@@ -953,7 +954,23 @@ function renderPlaces(){
   const unique=buildMySpots().map(s=>s.place);
   $("places").innerHTML=unique.map(p=>`<option value="${p}"></option>`).join("");
 }
-　function renderMySpots(){
+　function renderPlaceSuggestions(){
+  const box=$("placeSuggestions");
+  if(!box) return;
+
+  const spots=buildMySpots();
+
+  box.innerHTML=spots.map(s=>`
+    <button type="button" onclick="selectPlaceSuggestion('${s.place.replace(/'/g,"\\'")}')">
+      ${escapeHtml(s.place)}
+    </button>
+  `).join("");
+}
+  window.selectPlaceSuggestion = function(place){
+  $("place").value = place;
+  $("place").dispatchEvent(new Event("change"));
+};
+  function renderMySpots(){
   const box=$("mySpots");
   if(!box) return;
 
@@ -1040,6 +1057,7 @@ if(photo){
   renderHistory();
   renderSummary();
   renderPlaces();
+  renderPlaceSuggestions();
   renderMySpots();
   renderMySpotPhotos();
   renderHistoryPhotos();
