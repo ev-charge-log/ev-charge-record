@@ -185,6 +185,14 @@
     <option value="×">× 注意</option>
   </select>
 </div>
+
+<div class="full">
+  <label>
+    <input id="favoriteSpot" type="checkbox" />
+    ⭐ この充電スポットをお気に入りにする
+  </label>
+
+</div>
    <div class="full">
   <label>📷 充電スポット写真</label>
   <input id="placePhoto" type="file" accept="image/*">
@@ -486,6 +494,7 @@ const saveKwh=(inputKwh!==null&&inputKwh>0)
     id:Date.now(),
     date:$("date").value,
     place:$("place").value.trim(),
+    favorite:$("favoriteSpot").checked,
     address:$("addressInput").value.trim(), 
     latitude:num("latitude"),
 　　　longitude:num("longitude"),
@@ -645,6 +654,7 @@ async function renderHistoryPhotos(){
   $("memo").value=r.memo||"";
 　$("placeMemo").value=r.placeMemo||"";
 　$("placeRating").value=r.placeRating||"";
+  $("favoriteSpot").checked = r.favorite===true;
   $("addressInput").value=r.address||"";
   $("latitude").value=r.latitude??"";
 　$("longitude").value=r.longitude??"";
@@ -938,7 +948,7 @@ function buildMySpots(){
           latitude:r.latitude??null,
           longitude:r.longitude??null,
           placeRating:r.placeRating||"",
-          favorite:String(r.placeRating||"").includes("⭐"),
+          favorite:r.favorite===true,
           placeMemo:r.placeMemo||"",
           lastDate:r.date||"",
           count:1,
