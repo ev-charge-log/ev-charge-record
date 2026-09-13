@@ -995,14 +995,24 @@ ${s.placeMemo
     const box=document.getElementById(`mySpotPhoto-${s.recordId}`);
     if(!box) continue;
 
-    const photo=await getPhotoById(s.recordId);
+    const sameRecords=[...records]
+  .filter(r=>r.place===s.place)
+  .sort((a,b)=>
+    String(b.date||"").localeCompare(String(a.date||"")) ||
+    (b.id||0)-(a.id||0)
+  );
 
-    if(photo){
-      box.innerHTML=`<img src="${photo}" onclick="openPhoto('${photo}')"
-        style="width:120px;height:90px;object-fit:cover;margin-top:8px;border-radius:10px;display:block;cursor:pointer;">`;
-    }else{
-      box.innerHTML="";
-    }
+let photo="";
+for(const r of sameRecords){
+  photo=await getPhotoById(r.id);
+  if(photo) break;
+}
+
+if(photo){
+  box.innerHTML=`<img src="${photo}" onclick="openPhoto('${photo}')" style="width:120px;height:90px;object-fit:cover;margin-top:10px;border-radius:10px;display:block;cursor:pointer;">`;
+}else{
+  box.innerHTML="";
+}
   }
 }
   $("place").addEventListener("change",()=>{
