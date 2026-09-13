@@ -938,6 +938,7 @@ function buildMySpots(){
           latitude:r.latitude??null,
           longitude:r.longitude??null,
           placeRating:r.placeRating||"",
+          favorite:String(r.placeRating||"").includes("⭐"),
           placeMemo:r.placeMemo||"",
           lastDate:r.date||"",
           count:1,
@@ -958,7 +959,7 @@ function renderPlaces(){
   const box=$("placeSuggestions");
   if(!box) return;
 
-  const spots=buildMySpots();
+  const spots=buildMySpots().sort((a,b)=>Number(b.favorite)-Number(a.favorite)||String(b.lastDate||"").localeCompare(String(a.lastDate||"")));
 
   box.innerHTML=spots.map(s=>`
     <button type="button" onclick="selectPlaceSuggestion('${s.place.replace(/'/g,"\\'")}')">
