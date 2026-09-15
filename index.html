@@ -322,7 +322,7 @@ function initMap(){
 
   const points = [];
 
-  records.forEach(r=>{
+  buildMySpots().forEach(r=>{
     if(r.latitude != null && r.longitude != null){
 
       const lat = Number(r.latitude);
@@ -334,7 +334,7 @@ function initMap(){
         .addTo(map)
         .bindPopup(`
           <b>${r.place || "充電場所"}</b><br>
-          ${r.date || ""}<br>
+          ${r.lastDate || ""}<br>
           ${r.type || ""} ${r.power ? r.power+"kW" : ""}
         `);
 
