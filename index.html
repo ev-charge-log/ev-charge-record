@@ -329,8 +329,15 @@ function initMap(){
       const lng = Number(r.longitude);
 
       if(!Number.isFinite(lat) || !Number.isFinite(lng)) return;
-
-      const marker = L.marker([lat, lng])
+　　　　const iconText = r.type==="普通" ? "🔌" : (Number(r.power)>=50 ? "⚡⚡" : "⚡");
+      const marker = L.marker([lat, lng], {
+  icon: L.divIcon({
+    html: `<div style="font-size:24px;">${iconText}</div>`,
+    className: "",
+    iconSize: [30, 30],
+    iconAnchor: [15, 15]
+  })
+})
         .addTo(map)
         .bindPopup(`
           <b>${r.place || "充電場所"}</b><br>
