@@ -380,7 +380,18 @@ const marker = L.marker([lat, lng], {
   const box = document.getElementById(`mapPhoto-${r.recordId}`);
   if(!box) return;
 
-  const photo = await getPhotoById(r.recordId);
+  const sameRecords=[...records]
+  .filter(x=>x.place===r.place)
+  .sort((a,b)=>
+    String(b.date||"").localeCompare(String(a.date||"")) ||
+    (b.id||0)-(a.id||0)
+  );
+
+let photo="";
+for(const rec of sameRecords){
+  photo = await getPhotoById(rec.id);
+  if(photo) break;
+}
 
   box.innerHTML = photo
     ? `<img src="${photo}" style="width:160px;max-width:100%;border-radius:10px;display:block;">`
