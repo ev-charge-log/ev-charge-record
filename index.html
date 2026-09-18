@@ -376,7 +376,7 @@ const marker = L.marker([lat, lng], {
           ${r.lastDate || ""}<br>
           ${r.type || ""} ${r.power ? r.power+"kW" : ""}
          `, {
-  minWidth: 150
+  minWidth: 140
 });
 　　　　marker.on("popupopen", async ()=>{
   const box = document.getElementById(`mapPhoto-${r.recordId}`);
