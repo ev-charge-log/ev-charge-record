@@ -372,10 +372,20 @@ const marker = L.marker([lat, lng], {
         .addTo(map)
         .bindPopup(`
           <b>${r.place || "充電場所"}</b><br>
+          <div id="mapPhoto-${r.recordId}" style="margin:8px 0;"></div>
           ${r.lastDate || ""}<br>
           ${r.type || ""} ${r.power ? r.power+"kW" : ""}
         `);
+　　　　marker.on("popupopen", async ()=>{
+  const box = document.getElementById(`mapPhoto-${r.recordId}`);
+  if(!box) return;
 
+  const photo = await getPhotoById(r.recordId);
+
+  box.innerHTML = photo
+    ? `<img src="${photo}" style="width:160px;max-width:100%;border-radius:10px;display:block;">`
+    : "";
+});
       mapMarkers.push(marker);
       points.push([lat, lng]);
     }
