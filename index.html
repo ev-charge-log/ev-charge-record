@@ -375,7 +375,9 @@ const marker = L.marker([lat, lng], {
           <div id="mapPhoto-${r.recordId}" style="margin:8px 0;"></div>
           ${r.lastDate || ""}<br>
           ${r.type || ""} ${r.power ? r.power+"kW" : ""}
-        `);
+         `, {
+  minWidth: 150
+});
 　　　　marker.on("popupopen", async ()=>{
   const box = document.getElementById(`mapPhoto-${r.recordId}`);
   if(!box) return;
