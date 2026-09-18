@@ -394,8 +394,16 @@ for(const rec of sameRecords){
 }
 
   box.innerHTML = photo
-    ? `<img src="${photo}" style="width:140px;max-width:100%;border-radius:10px;display:block;">`
-    : "";
+  ? `<img src="${photo}" style="
+      width:120px;
+      height:120px;
+      object-fit:cover;
+      object-position:center;
+      border-radius:10px;
+      display:block;
+      margin:0 auto;
+    ">`
+  : "";
 });
       mapMarkers.push(marker);
       points.push([lat, lng]);
